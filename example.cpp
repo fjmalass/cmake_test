@@ -5,11 +5,11 @@
 
 #include "ExampleConfig.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
   if (argc < 2) {
     // report version
-    std::cout << argv[0] << " Version " << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << std::endl;
+    std::cout << argv[0] << " Version " << PROJECT_VERSION_MAJOR << "."
+              << PROJECT_VERSION_MINOR << std::endl;
     std::cout << "Usage: " << argv[0] << " number" << std::endl;
     return 1;
   }
@@ -21,8 +21,10 @@ int main(int argc, char* argv[])
 
   // calculate square root
   const double outputValue = sqrt(inputValue);
+#if DEBUG
+  std::cout << "IN DEBUG MODE" << std::endl;
+#endif
   std::cout << "The square root of " << inputValue << " is " << outputValue
             << std::endl;
   return 0;
 }
-

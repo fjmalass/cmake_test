@@ -14,14 +14,34 @@ project(
 # <PROJECT_NAME>_VERSION_MAJOR
 # PROJECT_DESCRIPTION
 
-# Compiler configuration
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+# specify the C++ standard
+add_library(example_compiler_flags INTERFACE)
+target_compile_features(example_compiler_flags INTERFACE cxx_std_23)
+
 set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+# add compiler warning flags just when building this project via
+# the BUILD_INTERFACE genex
+set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
+set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
+target_compile_options(
+    example_compiler_flags
+    INTERFACE
+        "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
+        "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>"
+)
 
 add_executable(Example example.cpp)
 
 # Used the CMake Config VERSION etc to .h file
 configure_file(ExampleConfig.h.in ExampleConfig.h)
 
-target_include_directories(Example PUBLIC "${PROJECT_BINARY_DIR}")
+# add new library 
+# add_subdirectory(MathFunctions)
+# list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
+# target_link_libraries(Example PUBLIC MathFunctions)
+
+target_include_directories(
+    Example
+    PUBLIC
+        "${PROJECT_BINARY_DIR}" # "${EXTRA_INCLUDES}"
+)
