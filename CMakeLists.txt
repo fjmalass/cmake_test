@@ -24,17 +24,25 @@ set(CMAKE_CXX_COMPILER clang++)
 
 set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
 set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message("GCC: ${gcc_like_cxx}")
-    message("MSVC: ${msvc_cxx}")
-endif()
 add_compile_options(
     "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
     "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>"
 )
+# Rem: Debug, RelWithDebInfo
+if(CMAKE_BUILD_TYPE MATCHES "Deb")
+    # target_compile_definitions(Example PRIVATE DEBUG)
+    add_compile_definitions(DEBUG)
+endif()
+# Rem: Debug only
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-Og)
+endif()
 
-# Add a DEBUG preprocessor definition for the Debug configuration (--config Debug)
-add_compile_definitions("$<$<CONFIG:Debug>:DEBUG>")
+# Rem: Release, RelWithDebugInfo 
+if(CMAKE_BUILD_TYPE MATCHES "Rel")
+    add_compile_options(-O3)
+endif()
+
 #
 # Set different compile options based on build type
 # add_compile_options($<$<CONFIG:Debug>:-Og -g -DDEBUG> $<$<CONFIG:Release>:-O3>)
@@ -44,6 +52,9 @@ add_executable(Example example.cpp)
 # Used the CMake Config VERSION etc to .h file
 configure_file(ExampleConfig.h.in ExampleConfig.h)
 target_include_directories(Example PUBLIC "${PROJECT_BINARY_DIR}")
+
+# Add a DEBUG preprocessor definition for the Debug configuration (CMAKE_BUILD_TYPE)
+# Needed as makefiles only support single configuration
 
 # add new library  WIP
 # add_subdirectory(MathFunctions)
