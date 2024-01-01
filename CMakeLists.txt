@@ -19,9 +19,13 @@ add_library(example_compiler_flags INTERFACE)
 target_compile_features(example_compiler_flags INTERFACE cxx_std_23)
 
 set(CMAKE_CXX_COMPILER clang++)
-# add compiler warning flags just when building this project via
-# the BUILD_INTERFACE genex
 
+# use --log-level= (ERROR, WARNING, NOTICE, STATUS, VERBOSE, DEBUG, TRACE) or using 
+# CMAKE_MESSAGE_LOG_LEVEL
+message(
+    CHECK_START
+    "${CMAKE_CXX_COMPILER} Global Compile Options and Definitions"
+)
 set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
 set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
 add_compile_options(
@@ -29,19 +33,24 @@ add_compile_options(
     "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>"
 )
 # Rem: Debug, RelWithDebInfo
+message(VERBOSE "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 if(CMAKE_BUILD_TYPE MATCHES "Deb")
     # target_compile_definitions(Example PRIVATE DEBUG)
     add_compile_definitions(DEBUG)
+    message(VERBOSE "Add Definition: -DDEBUG")
 endif()
 # Rem: Debug only
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-Og)
+    message(VERBOSE "Add Option: -Og")
 endif()
 
 # Rem: Release, RelWithDebugInfo 
 if(CMAKE_BUILD_TYPE MATCHES "Rel")
     add_compile_options(-O3)
+    message(VERBOSE "Add Option: -O3")
 endif()
+message(CHECK_PASS "Done")
 
 #
 # Set different compile options based on build type
@@ -57,7 +66,7 @@ target_include_directories(Example PUBLIC "${PROJECT_BINARY_DIR}")
 # Needed as makefiles only support single configuration
 
 # add new library  WIP
-# add_subdirectory(MathFunctions)
+# add_subdirectory(MathFunctions) # expects another CMakeLists.txt in subdiretory
 # list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
 # target_link_libraries(Example PUBLIC MathFunctions)
 

@@ -21,11 +21,11 @@ Following Tutorial to CMake 3.18 (hopefully get to modules)
 
 ### Parallel processing fl
 
-Use `-j <N>` flag or use `CMAKE_BUILD_PARALLEL_LEVEL`
+Use `-j <N>`  flag or `--parallel <N>` use `CMAKE_BUILD_PARALLEL_LEVEL`
 
 ### Debugging the cmake process
 
-Use `cmake ... --trace`
+Use `cmake ... --trace` or `cmake ... --log-level=Verbose` (can use Error, Status, )
 
 ### With different DEBUG / RELEASE
 
